@@ -16,10 +16,18 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
+import AboutTheCourse from '../util/aboutTheCourse'
+import ByTheNumber from '../util/byTheNumber'
+import Certificate from '../util/certificate'
+import { Description } from '@radix-ui/react-dialog'
+import CourseDescription from '../util/courseDescription'
+import Instructor from './instructor'
+import CourseInstructor from '../util/Courseinstructor'
+import CourseNotes from '../util/courseNotes'
 
 const TabComponent = () => {
   return (
-    <Tabs defaultValue="account" className="w-full">
+    <Tabs defaultValue="overview" className="w-full">
       <TabsList className="grid w-full grid-cols-6">
         <TabsTrigger value="overview">Overview</TabsTrigger>
         <TabsTrigger value="qanda">Q&A</TabsTrigger>
@@ -29,30 +37,26 @@ const TabComponent = () => {
         <TabsTrigger value="learning">Learning tools</TabsTrigger>
 
       </TabsList>
-      <TabsContent value="account">
+      <TabsContent value="overview">
         <Card>
           <CardHeader>
-            <CardTitle>Account</CardTitle>
+            <CardTitle>Overview</CardTitle>
             <CardDescription>
               Make changes to your account here. Click save when you're done.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            <div className="space-y-1">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" defaultValue="Pedro Duarte" />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="username">Username</Label>
-              <Input id="username" defaultValue="@peduarte" />
-            </div>
+            {/* contenet of overview */}
+            <AboutTheCourse />
+            <ByTheNumber />
+            <Certificate />
+            <CourseDescription />
+            <hr className='my-8'/>
+            <CourseInstructor />
           </CardContent>
-          <CardFooter>
-            <Button>Save changes</Button>
-          </CardFooter>
         </Card>
       </TabsContent>
-      <TabsContent value="password">
+      <TabsContent value="qanda">
         <Card>
           <CardHeader>
             <CardTitle>Password</CardTitle>
@@ -73,6 +77,17 @@ const TabComponent = () => {
           <CardFooter>
             <Button>Save password</Button>
           </CardFooter>
+        </Card>
+      </TabsContent>
+      <TabsContent value="notes">
+        <Card>
+          <CardHeader>
+            <CardTitle>Notes</CardTitle>
+            <CardDescription className='text-xl'>
+            Save your notes today, access them tomorrow
+            </CardDescription>
+          </CardHeader>
+            <CourseNotes />
         </Card>
       </TabsContent>
     </Tabs>
