@@ -6,7 +6,6 @@ import { ThemeProvider } from "@/components/util/theme-provider";
 import Footer from "@/components/layout/footer";
 
 const inter = Inter({ subsets: ["latin"] });
-
 export const metadata: Metadata = {
   title: "Sodemy",
   description: "Your only stop for learning...",
