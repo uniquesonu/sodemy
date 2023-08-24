@@ -64,6 +64,11 @@ const CourseNotes: React.FC = () => {
                   <div className="border p-2">{note}</div>
                 )}
                 <div className="flex gap-2">
+                <Button
+                   variant="outline"
+                   onClick={() => handleEditNote(index)}>
+                    Edit
+                    </Button>
                   
                   <Button
                    variant="outline"
