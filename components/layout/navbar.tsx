@@ -1,3 +1,4 @@
+"use client"
 import { ShoppingCart, Sun, Moon } from "lucide-react";
 import SearchBar from "./search";
 import { Button } from "../ui/button";
@@ -23,12 +24,37 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useState } from "react";
+
 const NavBar = () => {
+  const [position, setPosition] = useState("bottom")
   return (
     <nav className="flex items-center justify-between p-4 sticky top-0 shadow-sm shadow-foreground-muted dark:shadow-neutral-500 bg-background z-50">
       <h1 className="text-2xl font-semibold">sodemy</h1>
       <ul className="flex-1 items-center gap-4 pr-4 pl-16 hidden md:flex">
-        <li>Categories</li>
+        {/* <li>Categories</li> */}
+        <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">Categories</Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuSeparator />
+        <DropdownMenuRadioGroup value={position} onValueChange={setPosition}>
+          <DropdownMenuRadioItem value="top">Top</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="bottom">Bottom</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="right">Right</DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
         <SearchBar />
         <li>Sodemy Business</li>
         <li>Teach on Sodemy</li>

@@ -4,6 +4,7 @@ const nextConfig = {
     remotePatterns: [
       { hostname: "img-c.udemycdn.com" },
       { hostname: "th.bing.com" },
+      { hostname: "s.udemycdn.com" },
     ],
   },
 };
