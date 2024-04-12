@@ -5,9 +5,8 @@ import Total from './Total'
 const page = () => {
   return (
     <div className='w-full container mx-auto min-h-screen'>
-      <h1 className="text-3xl font-semibold my-8">Shopping Cart</h1>
+      <h1 className="text-4xl font-bold my-8">Shopping Cart</h1>
         <div className="w-full container mx-auto flex gap-8">
-      {/* <h1 className="text-3xl font-semibold my-8">Shopping Cart</h1> */}
       <div className="w-3/4 grid grid-cols-1 md:grid-cols-1 gap-8">
         <Course
           title="Next.js 14 & React - The Complete Guide"
