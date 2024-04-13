@@ -2,6 +2,7 @@ import Image from "next/image";
 import React from "react";
 
 const Course = ({
+  imgURL,
   title,
   author,
   rating,
@@ -9,6 +10,7 @@ const Course = ({
   price,
   originalPrice,
 }: {
+  imgURL: string;
   title: string;
   author: string;
   rating: number;
@@ -19,9 +21,10 @@ const Course = ({
   return (
     <div className="w-full text-foreground rounded-lg shadow-md p-6">
       <div className="w-full flex items-center justify-between  gap-4">
+        <div className="flex gap-8 items-center">
         <Image
-            src="https://th.bing.com/th/id/OIP.IzKqeXIRSjV-7Rb_bR3k6QHaEK?w=285&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7"
-            alt="Course Image"
+            src={imgURL}
+            alt={title}
             width={300}
             height={100}
             />
@@ -32,6 +35,7 @@ const Course = ({
             <span className="text-yellow-500">{rating}</span>
             <span className="ml-1">({numReviews} reviews)</span>
           </div>
+        </div>
         </div>
         <div>
           <p className="text-lg font-semibold">${price}</p>
