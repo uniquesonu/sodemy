@@ -3,7 +3,7 @@ import { Video, Code, FileText, Smartphone, Tv, Award } from "lucide-react";
 
 const CourseFeatues = () => {
   return (
-    <div className=" py-12 rounded shadow-lg bg-background/60 text-foreground px-72">
+    <div className="w-2/3 py-12 rounded shadow-lg bg-background/60 text-foreground px-32 mb-4">
   <h2 className="text-2xl font-extrabold underline mb-4">This course includes:</h2>
   <div className="grid grid-cols-2 gap-6">
     <div className="flex items-center">

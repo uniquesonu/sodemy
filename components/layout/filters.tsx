@@ -21,7 +21,7 @@ import FilterAccordian from './filterAccordian'
 
 const Filters = () => {
   return (
-    <div className=''>
+    <div className='top-32 sticky'>
         <div className='flex gap-4'>
             <Button variant={"outline"}>Filter</Button>
             <DropdownMenu>

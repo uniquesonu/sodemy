@@ -23,7 +23,7 @@ const CourseCard = (
         <CardContent className="w-72 flex flex-col justify-center items-start gap-2 ">
               <Image
                 src={thumbnail}
-                alt=""
+                alt={courseName}
                 className="mx-auto my-2 rounded w-full"
                 width={600}
                 height={600}
