@@ -1,5 +1,7 @@
 import Image from "next/image";
 import React from "react";
+import { Star } from 'lucide-react';
+
 
 const Course = ({
   imgURL,
@@ -32,13 +34,15 @@ const Course = ({
           <h2 className="text-lg font-semibold">{title}</h2>
           <p className="text-white">{author}</p>
           <div className="flex items-center mt-2">
-            <span className="text-yellow-500">{rating}</span>
+            <span className="text-yellow-500 flex items-center gap-1 text-lg">
+             <Star/> {rating}
+            </span>
             <span className="ml-1">({numReviews} reviews)</span>
           </div>
         </div>
         </div>
         <div>
-          <p className="text-lg font-semibold">${price}</p>
+          <p className="text-lg font-semibold">₹ {price}</p>
           <p className="text-gray-600 line-through">${originalPrice}</p>
           <div className="flex justify-end mt-4">
         <button className="bg-purple-500 text-white px-4 py-2 rounded-lg">
