@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { PrismaClient } from "@prisma/client";
-import * as z from "zod";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-
-const prisma = new PrismaClient();
+import * as z from "zod";
+import { prisma } from "@/lib/prisma";
 
 const reorderSchema = z.object({
   list: z.array(
@@ -23,40 +22,27 @@ export async function PATCH(
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
-      return NextResponse.json(
-        { message: "Unauthorized" },
-        { status: 401 }
-      );
-    }
-
-    const course = await prisma.course.findUnique({
-      where: {
-        id: params.courseId,
-      },
-      include: {
-        chapters: true,
-      },
-    });
-
-    if (!course) {
-      return NextResponse.json(
-        { message: "Course not found" },
-        { status: 404 }
-      );
-    }
-
-    // Verify ownership
-    if (course.instructorId !== session.user.id) {
-      return NextResponse.json(
-        { message: "Unauthorized" },
-        { status: 401 }
-      );
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const body = await req.json();
     const { list } = reorderSchema.parse(body);
 
-    // Update chapter orders in a transaction
+    const course = await prisma.course.findUnique({
+      where: {
+        id: params.courseId,
+      },
+    });
+
+    if (!course) {
+      return new NextResponse("Course not found", { status: 404 });
+    }
+
+    if (course.instructorId !== session.user.id) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    // Update the order of each chapter in a transaction
     await prisma.$transaction(
       list.map((item) =>
         prisma.chapter.update({
@@ -70,21 +56,12 @@ export async function PATCH(
       )
     );
 
-    return NextResponse.json(
-      { message: "Chapters reordered successfully" },
-      { status: 200 }
-    );
+    return NextResponse.json({ success: true });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { message: "Invalid request data" },
-        { status: 422 }
-      );
+      return new NextResponse(JSON.stringify(error.errors), { status: 400 });
     }
 
-    return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 }
-    );
+    return new NextResponse("Internal Error", { status: 500 });
   }
 } 

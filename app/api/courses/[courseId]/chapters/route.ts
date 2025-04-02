@@ -3,8 +3,7 @@ import { getServerSession } from "next-auth";
 import { PrismaClient } from "@prisma/client";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import * as z from "zod";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 const chapterSchema = z.object({
   title: z.string().min(1, "Title is required"),

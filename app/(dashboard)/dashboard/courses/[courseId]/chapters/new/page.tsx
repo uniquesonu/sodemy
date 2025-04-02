@@ -1,11 +1,9 @@
 import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { PrismaClient } from "@prisma/client";
 import { ChapterForm } from "@/components/forms/chapter-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 interface NewChapterPageProps {
   params: {

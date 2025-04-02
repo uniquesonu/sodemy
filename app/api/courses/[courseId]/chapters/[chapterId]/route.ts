@@ -3,8 +3,7 @@ import { getServerSession } from "next-auth";
 import { PrismaClient } from "@prisma/client";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import * as z from "zod";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 const chapterSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -20,77 +19,65 @@ export async function DELETE(
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
-      return NextResponse.json(
-        { message: "Unauthorized" },
-        { status: 401 }
-      );
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const course = await prisma.course.findUnique({
       where: {
         id: params.courseId,
       },
-      include: {
-        chapters: true,
-      },
     });
 
     if (!course) {
-      return NextResponse.json(
-        { message: "Course not found" },
-        { status: 404 }
-      );
+      return new NextResponse("Course not found", { status: 404 });
     }
 
-    // Verify ownership
     if (course.instructorId !== session.user.id) {
-      return NextResponse.json(
-        { message: "Unauthorized" },
-        { status: 401 }
-      );
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    // Delete chapter and its lessons
-    await prisma.$transaction([
-      prisma.lesson.deleteMany({
+    // Delete the chapter and its lessons in a transaction
+    await prisma.$transaction(async (tx) => {
+      // Delete all lessons in the chapter
+      await tx.lesson.deleteMany({
         where: {
           chapterId: params.chapterId,
         },
-      }),
-      prisma.chapter.delete({
+      });
+
+      // Delete the chapter
+      await tx.chapter.delete({
         where: {
           id: params.chapterId,
         },
-      }),
-    ]);
+      });
 
-    // Reorder remaining chapters
-    const remainingChapters = course.chapters
-      .filter((chapter) => chapter.id !== params.chapterId)
-      .sort((a, b) => a.order - b.order);
+      // Reorder the remaining chapters
+      const remainingChapters = await tx.chapter.findMany({
+        where: {
+          courseId: params.courseId,
+        },
+        orderBy: {
+          order: "asc",
+        },
+      });
 
-    await prisma.$transaction(
-      remainingChapters.map((chapter, index) =>
-        prisma.chapter.update({
+      // Update the order of each chapter
+      for (let i = 0; i < remainingChapters.length; i++) {
+        await tx.chapter.update({
           where: {
-            id: chapter.id,
+            id: remainingChapters[i].id,
           },
           data: {
-            order: index,
+            order: i,
           },
-        })
-      )
-    );
+        });
+      }
+    });
 
-    return NextResponse.json(
-      { message: "Chapter deleted successfully" },
-      { status: 200 }
-    );
+    return NextResponse.json({ success: true });
   } catch (error) {
-    return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 }
-    );
+    return new NextResponse("Internal Error", { status: 500 });
   }
 }
 
