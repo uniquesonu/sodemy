@@ -1,3 +1,5 @@
+"use client";
+
 import Carousel from "@/components/layout/carousel";
 import Categories from "@/components/layout/categories";
 import CourseSelection from "@/components/layout/courseSelection";
