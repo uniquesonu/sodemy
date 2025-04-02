@@ -17,7 +17,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Pencil, Trash, GripVertical, Plus } from "lucide-react";
+import { Pencil, Trash, GripVertical, Plus, ChevronDown, ChevronRight, Clock } from "lucide-react";
 import { toast } from "sonner";
 
 interface ChapterListProps {
@@ -31,6 +31,7 @@ export function ChapterList({ courseId, chapters: initialChapters }: ChapterList
   const router = useRouter();
   const [chapters, setChapters] = useState(initialChapters);
   const [isReordering, setIsReordering] = useState(false);
+  const [expandedChapters, setExpandedChapters] = useState<string[]>([]);
 
   const onDragEnd = async (result: DropResult) => {
     if (!result.destination) return;
@@ -88,6 +89,14 @@ export function ChapterList({ courseId, chapters: initialChapters }: ChapterList
     } catch {
       toast.error("Failed to delete chapter");
     }
+  };
+
+  const toggleChapter = (chapterId: string) => {
+    setExpandedChapters((prev) =>
+      prev.includes(chapterId)
+        ? prev.filter((id) => id !== chapterId)
+        : [...prev, chapterId]
+    );
   };
 
   return (
@@ -204,6 +213,58 @@ export function ChapterList({ courseId, chapters: initialChapters }: ChapterList
           )}
         </Droppable>
       </DragDropContext>
+      <div className="mt-4">
+        {chapters.map((chapter) => (
+          <div key={chapter.id} className="rounded-lg border">
+            <button
+              onClick={() => toggleChapter(chapter.id)}
+              className="flex w-full items-center justify-between p-4 hover:bg-muted/50"
+            >
+              <div className="flex items-center gap-2">
+                {expandedChapters.includes(chapter.id) ? (
+                  <ChevronDown className="h-4 w-4" />
+                ) : (
+                  <ChevronRight className="h-4 w-4" />
+                )}
+                <div>
+                  <h3 className="font-semibold">{chapter.title}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {chapter.lessons.length} lessons
+                  </p>
+                </div>
+              </div>
+            </button>
+            <div
+              className={cn(
+                "grid gap-2 overflow-hidden transition-all",
+                expandedChapters.includes(chapter.id)
+                  ? "grid-rows-[1fr] p-4"
+                  : "grid-rows-[0fr]"
+              )}
+            >
+              <div className="space-y-2">
+                {chapter.lessons.map((lesson) => (
+                  <div
+                    key={lesson.id}
+                    className="flex items-center justify-between rounded-md border p-3"
+                  >
+                    <div>
+                      <h4 className="font-medium">{lesson.title}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {lesson.description}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <Clock className="h-4 w-4" />
+                      <span>{lesson.duration}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 } 
