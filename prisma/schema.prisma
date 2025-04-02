@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String     @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  email           String     @unique
+  password        String
+  role            Role       @default(STUDENT)
+  image           String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  courses         Course[]   @relation("CourseInstructor")
+  enrollments     Enrollment[]
+  reviews         Review[]
+}
+
+model Course {
+  id              String     @id @default(auto()) @map("_id") @db.ObjectId
+  title           String
+  description     String
+  price           Float
+  thumbnail       String
+  instructorId    String     @db.ObjectId
+  instructor      User       @relation("CourseInstructor", fields: [instructorId], references: [id])
+  category        String
+  chapters        Chapter[]
+  enrolledStudents Int       @default(0)
+  rating          Float      @default(0)
+  reviews         Review[]
+  status          CourseStatus @default(DRAFT)
+  enrollments     Enrollment[]
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model Chapter {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  courseId    String    @db.ObjectId
+  course      Course    @relation(fields: [courseId], references: [id])
+  order       Int
+  lessons     Lesson[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Lesson {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  chapterId   String    @db.ObjectId
+  chapter     Chapter   @relation(fields: [chapterId], references: [id])
+  order       Int
+  videoUrl    String
+  duration    Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Enrollment {
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  studentId         String    @db.ObjectId
+  student           User      @relation(fields: [studentId], references: [id])
+  courseId          String    @db.ObjectId
+  course            Course    @relation(fields: [courseId], references: [id])
+  progress          Float     @default(0)
+  completedLessons  String[]  @db.ObjectId
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model Review {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  studentId   String    @db.ObjectId
+  student     User      @relation(fields: [studentId], references: [id])
+  courseId    String    @db.ObjectId
+  course      Course    @relation(fields: [courseId], references: [id])
+  rating      Int
+  comment     String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+enum Role {
+  STUDENT
+  INSTRUCTOR
+  ADMIN
+}
+
+enum CourseStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
