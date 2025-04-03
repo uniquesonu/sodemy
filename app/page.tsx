@@ -8,6 +8,7 @@ import Instructor from "@/components/layout/instructor";
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col p-4">
+      <h1>changed by megh</h1>
       <Carousel />
       <CourseSelection />
       <Categories />
